@@ -316,6 +316,12 @@ namespace UnityEditor.Rendering.Toon
             SceneLight = 1 << 12,
             EnvironmentalLightEffectiveness = 1 << 13,
             MetaverseSettings = 1 << 14,
+            
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+            Custom = 1 << 15,
+/**********************************************************************************************************************/
         }
 
         // variables which must be gotten from shader at the beggning of GUI
@@ -412,6 +418,12 @@ namespace UnityEditor.Rendering.Toon
         protected MaterialProperty offset_Z = null;
         protected MaterialProperty outlineTex = null;
         protected MaterialProperty bakedNormal = null;
+        
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+        protected MaterialProperty ditherTex = null;
+/**********************************************************************************************************************/
 
         //------------------------------------------------------
         protected MaterialEditor m_MaterialEditor;
@@ -510,6 +522,12 @@ namespace UnityEditor.Rendering.Toon
 
 
             FindTessellationProperties(props);
+            
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+            ditherTex = FindProperty("_DitherTex", props);
+/**********************************************************************************************************************/
         }
         // --------------------------------
 
@@ -595,10 +613,16 @@ namespace UnityEditor.Rendering.Toon
             public static readonly GUIContent tessellationFoldout = EditorGUIUtility.TrTextContent("Tessellation Settings", "Tessellation settings for DX11, DX12 and Mac  Metal.");
             public static readonly GUIContent maskRenderingFoldout = EditorGUIUtility.TrTextContent("Mask Rendering Settings", "Mask rendering setting, controlled by Visual Compositor.");
             public static readonly GUIContent lightEffectivenessFoldout = EditorGUIUtility.TrTextContent("Scene Light Effectiveness Settings", "Scene light effectiveness to each parameter.");
-
+            
             public static readonly GUIContent metaverseSettingsFoldout = EditorGUIUtility.TrTextContent("Metaverse Settings (Experimental)", "Default directional light when no directional lights are in the scene.");
             public static readonly GUIContent shadowControlMapFoldout = EditorGUIUtility.TrTextContent("Shadow Control Maps", "Shadow control map settings. Such as positions and highlight filtering.");
             public static readonly GUIContent pointLightFoldout = EditorGUIUtility.TrTextContent("Point Light Settings", "Point light settings. Such as filtering and step offset.");
+
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+            public static readonly GUIContent customFoldout = EditorGUIUtility.TrTextContent("Custom Settings", "Custom settings that do not exist in the original official UTS.");
+/**********************************************************************************************************************/
 
             public static readonly GUIContent baseColorText = new GUIContent("Base Map", "Base Color : Texture(sRGB) × Color(RGB) Default:White");
             public static readonly GUIContent firstShadeColorText = new GUIContent("1st Shading Map", "The map used for the brighter portions of the shadow.");
@@ -618,6 +642,12 @@ namespace UnityEditor.Rendering.Toon
             public static readonly GUIContent outlineTexText = new GUIContent("Outline Color Map", "Outline texture : Texture(sRGB) Default:White");
             public static readonly GUIContent bakedNormalOutlineText = new GUIContent("Baked Normal Map for Outline", "Unpacked Normal Map : Texture(linear) .Note that this is not a standard NORMAL MAP.");
             public static readonly GUIContent clippingMaskText = new GUIContent("Clipping Mask", "A grayscale texture which utilises its brightness to control transparency.");
+            
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+            public static readonly GUIContent ditherTexText = new GUIContent("Dither Texture", "A grayscale texture used for dither fading.");
+/**********************************************************************************************************************/
 
             public static readonly GUIContent specularModeText = new GUIContent("Specular Mode", "Specular light mode. Hard or Soft.");
             public static readonly GUIContent specularBlendModeText = new GUIContent("Color Blending Mode", "Specular color blending mode. Multiply or Add.");
@@ -908,6 +938,12 @@ namespace UnityEditor.Rendering.Toon
             // originally these were in simple UI
             m_MaterialScopeList.RegisterHeaderScope(Styles.lightEffectivenessFoldout, Expandable.SceneLight, GUI_LightColorEffectiveness, (uint)UTS_Mode.ThreeColorToon, (uint)UTS_TransparentMode.Off, isTessellation: 0);
             m_MaterialScopeList.RegisterHeaderScope(Styles.metaverseSettingsFoldout, Expandable.MetaverseSettings, GUI_MetaverseSettings, (uint)UTS_Mode.ThreeColorToon, (uint)UTS_TransparentMode.Off, isTessellation: 0);
+            
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of original UTS3)
+//---------------------------------------------------------------------------------------------------------------------/
+            m_MaterialScopeList.RegisterHeaderScope(Styles.customFoldout, Expandable.Custom, GUI_CustomSettings, (uint)UTS_Mode.ThreeColorToon, (uint)UTS_TransparentMode.Off, isTessellation: 0);
+/**********************************************************************************************************************/
         }
 
         void UTS3DrawHeaders(MaterialEditor materialEditor, Material material)
@@ -2362,6 +2398,11 @@ namespace UnityEditor.Rendering.Toon
             }
             EditorGUI.EndDisabledGroup();
 
+        }
+
+        void GUI_CustomSettings(Material material)
+        {
+            m_MaterialEditor.TexturePropertySingleLine(Styles.ditherTexText, ditherTex); 
         }
 
         public void DoPopup(GUIContent label, MaterialProperty property, string[] options)
