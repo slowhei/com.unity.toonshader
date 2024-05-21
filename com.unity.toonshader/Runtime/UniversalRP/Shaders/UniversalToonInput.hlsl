@@ -184,6 +184,14 @@ half _BumpScale;
 half _OcclusionStrength;
 half _Surface;
 
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of original UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+float4 _DitherTex_ST;
+float4 _DitherTex_TexelSize;
+float _MinDitherDistance;
+float _MaxDitherDistance;
+/**********************************************************************************************************************/
 
 CBUFFER_END
 
@@ -219,6 +227,13 @@ sampler2D _BakedNormal;
 TEXTURE2D(_OcclusionMap);       SAMPLER(sampler_OcclusionMap);
 TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
 TEXTURE2D(_SpecGlossMap);       SAMPLER(sampler_SpecGlossMap);
+
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of original UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+TEXTURE2D(_DitherTex);
+SAMPLER(sampler_DitherTex);
+/**********************************************************************************************************************/
 
 
 #ifdef _SPECULAR_SETUP
