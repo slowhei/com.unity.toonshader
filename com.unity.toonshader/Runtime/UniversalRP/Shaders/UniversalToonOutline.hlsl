@@ -20,6 +20,12 @@
                 float3 tangentDir : TEXCOORD2;
                 float3 bitangentDir : TEXCOORD3;
 
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+                float4 posNDC : TEXCOORD4;
+/**********************************************************************************************************************/
+
                 UNITY_VERTEX_OUTPUT_STEREO
             };
             VertexOutput vert (VertexInput v) {
@@ -64,6 +70,13 @@
 #endif
                 //v.2.0.7.5
                 o.pos.z = o.pos.z + _Offset_Z * _ClipCameraPos.z;
+
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+                o.posNDC = GetVertexPositionInputs(v.vertex.xyz).positionNDC;
+/**********************************************************************************************************************/
+                
                 return o;
             }
             float4 frag(VertexOutput i) : SV_Target{
@@ -87,6 +100,21 @@
                 float4 _MainTex_var = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex, TRANSFORM_TEX(Set_UV0, _MainTex));
                 float3 Set_BaseColor = _BaseColor.rgb*_MainTex_var.rgb;
                 float3 _Is_BlendBaseColor_var = lerp( _Outline_Color.rgb*lightColor, (_Outline_Color.rgb*Set_BaseColor*Set_BaseColor*lightColor), _Is_BlendBaseColor );
+
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+                const float2 positionSS = i.posNDC.xy / i.posNDC.w * _ScreenParams.xy;
+                float ditherVal = SAMPLE_TEXTURE2D(
+                    _DitherTex,
+                    sampler_DitherTex,
+                    positionSS * _DitherTex_TexelSize.xy
+                ).r;
+                clip((i.posNDC.w - _MinDitherDistance)
+                    / (_MaxDitherDistance - _MinDitherDistance)
+                    - ditherVal);
+/**********************************************************************************************************************/
+                
                 //
                 float3 _OutlineTex_var = tex2D(_OutlineTex,TRANSFORM_TEX(Set_UV0, _OutlineTex)).rgb;
 //v.2.0.7.5
