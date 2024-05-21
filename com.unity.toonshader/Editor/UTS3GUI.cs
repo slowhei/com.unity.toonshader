@@ -322,6 +322,7 @@ namespace UnityEditor.Rendering.Toon
 //---------------------------------------------------------------------------------------------------------------------/
             Custom = 1 << 15,
 /**********************************************************************************************************************/
+
         }
 
         // variables which must be gotten from shader at the beggning of GUI
@@ -423,6 +424,8 @@ namespace UnityEditor.Rendering.Toon
 // CUSTOM CODE (not part of official UTS)
 //---------------------------------------------------------------------------------------------------------------------/
         protected MaterialProperty ditherTex = null;
+        protected MaterialProperty minDitherDistance = null;
+        protected MaterialProperty maxDitherDistance = null;
 /**********************************************************************************************************************/
 
         //------------------------------------------------------
@@ -527,7 +530,10 @@ namespace UnityEditor.Rendering.Toon
 // CUSTOM CODE (not part of official UTS)
 //---------------------------------------------------------------------------------------------------------------------/
             ditherTex = FindProperty("_DitherTex", props);
+            minDitherDistance = FindProperty("_MinDitherDistance", props);
+            maxDitherDistance = FindProperty("_MaxDitherDistance", props);
 /**********************************************************************************************************************/
+
         }
         // --------------------------------
 
@@ -884,6 +890,17 @@ namespace UnityEditor.Rendering.Toon
             public static readonly FloatProperty colorShiftSpeedText = new FloatProperty(label: "Color Shifting Speed (Time)",
                 tooltip: "Sets the reference speed for color shift. When the value is 1, one cycle should take around 6 seconds.",
                 propName: "_ColorShift_Speed", defaultValue: 0);
+            
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+            public static readonly FloatProperty minDitherDistanceText = new FloatProperty(label: "Minimum Dither Distance", 
+                tooltip: "Objects this distance away or closer will be completely invisible.",
+                propName: "_MinDitherDistance", defaultValue: 0);
+            public static readonly FloatProperty maxDitherDistanceText = new FloatProperty(label: "Maximum Dither Distance", 
+                tooltip: "Objects this distance away or farther will be completely visible.",
+                propName: "_MaxDitherDistance", defaultValue: 1);
+/**********************************************************************************************************************/
 
             // Color prperties
             public static readonly ColorProperty viewShiftText = new ColorProperty(label: "Shifting Target Color",
@@ -944,6 +961,7 @@ namespace UnityEditor.Rendering.Toon
 //---------------------------------------------------------------------------------------------------------------------/
             m_MaterialScopeList.RegisterHeaderScope(Styles.customFoldout, Expandable.Custom, GUI_CustomSettings, (uint)UTS_Mode.ThreeColorToon, (uint)UTS_TransparentMode.Off, isTessellation: 0);
 /**********************************************************************************************************************/
+
         }
 
         void UTS3DrawHeaders(MaterialEditor materialEditor, Material material)
@@ -2400,10 +2418,18 @@ namespace UnityEditor.Rendering.Toon
 
         }
 
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
         void GUI_CustomSettings(Material material)
         {
             m_MaterialEditor.TexturePropertySingleLine(Styles.ditherTexText, ditherTex); 
+            GUI_FloatProperty(material, Styles.minDitherDistanceText);
+            GUI_FloatProperty(material, Styles.maxDitherDistanceText);
+            // m_MaterialEditor.FloatProperty(Styles.minDitherDistanceText, minDitherDistance);
+            // m_MaterialEditor.FloatProperty(Styles.maxDitherDistanceText, maxDitherDistance);
         }
+/**********************************************************************************************************************/
 
         public void DoPopup(GUIContent label, MaterialProperty property, string[] options)
         {

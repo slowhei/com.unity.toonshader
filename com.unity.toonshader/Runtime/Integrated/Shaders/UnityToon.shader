@@ -479,6 +479,7 @@ Shader "Toon" {
         _MinDitherDistance("Minimum Dither Fade Distance", Float) = 0
         _MaxDitherDistance("Maximum Dither Fade Distance", Float) = 1
 /**********************************************************************************************************************/
+
     } 
 
     HLSLINCLUDE
