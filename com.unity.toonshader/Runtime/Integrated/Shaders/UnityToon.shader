@@ -475,8 +475,6 @@ Shader "Toon" {
 /**********************************************************************************************************************/
 // CUSTOM CODE (not part of official UTS)
 //---------------------------------------------------------------------------------------------------------------------/
-//        [Toggle] _Custom_Code ("Custom Code", Float) = 1
-        
         _DitherTex("Texture", 2D) = "white" {}
         _MinDitherDistance("Minimum Dither Fade Distance", Float) = 0
         _MaxDitherDistance("Maximum Dither Fade Distance", Float) = 1
