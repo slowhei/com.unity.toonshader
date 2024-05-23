@@ -503,6 +503,7 @@
 /**********************************************************************************************************************/
 // CUSTOM CODE (not part of official UTS)
 //---------------------------------------------------------------------------------------------------------------------/
+#if _CUSTOM_CODE_ON
                 const float2 positionSS = i.positionNDC.xy / i.positionNDC.w * _ScreenParams.xy;
                 float ditherVal = SAMPLE_TEXTURE2D(
                     _DitherTex,
@@ -512,6 +513,7 @@
                 clip((i.positionNDC.w - _MinDitherDistance)
                     / (_MaxDitherDistance - _MinDitherDistance)
                     - ditherVal);
+#endif
 /**********************************************************************************************************************/
 
 #ifdef _WRITE_RENDERING_LAYERS

@@ -717,7 +717,7 @@ namespace UnityEditor.Rendering.Toon
             {//When AngelRing is available
                 material.SetFloat(UTS3GUI.ShaderPropIs_LightColor_AR, 1);
             }
-            if (material.HasProperty(UTS3GUI.ShaderPropOutline))//OUTLINE‚ª‚ ‚éê‡.
+            if (material.HasProperty(UTS3GUI.ShaderPropOutline))//OUTLINEâ€šÂªâ€šÂ â€šÃ©ÂÃªÂâ€¡.
             {
                 material.SetFloat(UTS3GUI.ShaderPropIs_LightColor_Outline, 1);
             }

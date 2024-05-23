@@ -204,7 +204,12 @@ namespace UnityEditor.Rendering.Toon
         internal const string ShaderDefineIS_TRANSCLIPPING_ON = "_IS_TRANSCLIPPING_ON";
 
         internal const string ShaderDefineIS_CLIPPING_MATTE = "_IS_CLIPPING_MATTE";
-
+        
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+        internal const string ShaderDefineCUSTOM_CODE_ON = "_CUSTOM_CODE_ON";
+/**********************************************************************************************************************/
 
         protected readonly string[] UtsModeNames = { "Standard", "With Additional Control Maps" };
         protected readonly string[] EmissiveScrollMode = { "UV Coordinate Scroll", "View Coordinate Scroll" };
@@ -720,6 +725,7 @@ namespace UnityEditor.Rendering.Toon
             public static readonly GUIContent emissionAnimationText = new GUIContent("Emission Map Animation", "When Enabled, the UV and Color of the Emission Map are animated.");
             public static readonly GUIContent outlineModeText = new GUIContent("Outline Mode", "Specifies how the inverted-outline object is spawned.");
             public static readonly GUIContent limitLightIntensityText = new GUIContent("Limit Light Intensity", "Limit the brightness of the light to 1 to avoid white-out.");
+            
             // Range properties
             public static readonly RangeProperty metaverseRangePropText = new RangeProperty(
                 label: "Metaverse Light Intensity", 
@@ -2423,11 +2429,10 @@ namespace UnityEditor.Rendering.Toon
 //---------------------------------------------------------------------------------------------------------------------/
         void GUI_CustomSettings(Material material)
         {
+            GUI_ToggleShaderKeyword(material, "Custom Code", ShaderDefineCUSTOM_CODE_ON);
             m_MaterialEditor.TexturePropertySingleLine(Styles.ditherTexText, ditherTex); 
             GUI_FloatProperty(material, Styles.minDitherDistanceText);
             GUI_FloatProperty(material, Styles.maxDitherDistanceText);
-            // m_MaterialEditor.FloatProperty(Styles.minDitherDistanceText, minDitherDistance);
-            // m_MaterialEditor.FloatProperty(Styles.maxDitherDistanceText, maxDitherDistance);
         }
 /**********************************************************************************************************************/
 
