@@ -166,15 +166,6 @@
             UNITY_VERTEX_INPUT_INSTANCE_ID
             };
             struct VertexOutput {
-                
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of original UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-#if _CUSTOM_CODE_ON
-                float4 positionNDC : TEXCOORD12;
-#endif
-/**********************************************************************************************************************/
-                
                 float4 pos : SV_POSITION;
                 float2 uv0 : TEXCOORD0;
 //v.2.0.4
@@ -544,14 +535,6 @@
                 o.mainLightID = DetermineUTS_MainLightIndex(o.posWorld.xyz, 0, positionCS);
 #endif
 
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of original UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-#if _CUSTOM_CODE_ON
-                o.positionNDC = GetVertexPositionInputs(v.vertex.xyz).positionNDC;
-#endif
-/**********************************************************************************************************************/
-		
                 return o;
             }
 
@@ -582,21 +565,6 @@
                             ,outRenderingLayers
                         #endif
                     );
-                
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of official UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-#if _CUSTOM_CODE_ON
-                    const float2 positionSS = i.positionNDC.xy / i.positionNDC.w * _ScreenParams.xy;
-                    float ditherVal = SAMPLE_TEXTURE2D(
-                        _DitherTex,
-                        sampler_DitherTex,
-                        positionSS * _DitherTex_TexelSize.xy
-                    ).r;
-                    clip(1 - _DitherStrength - ditherVal);
-#endif
-/**********************************************************************************************************************/
-                
 #else
                     fragDoubleShadeFeather(i, facing, finalRGBA
                         #ifdef _WRITE_RENDERING_LAYERS
@@ -605,4 +573,22 @@
                     );
 #endif
 
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+#if _CUSTOM_CODE_ON
+                float4 positionNDC = i.positionCS * 0.5f;
+                positionNDC.xy = float2(positionNDC.x, positionNDC.y * _ProjectionParams.x) + positionNDC.w;
+                positionNDC.zw = i.positionCS.zw;
+                const float2 positionSS = positionNDC.xy / positionNDC.w * _ScreenParams.xy;
+                
+                float ditherVal = SAMPLE_TEXTURE2D(
+                    _DitherTex,
+                    sampler_DitherTex,
+                    positionSS * _DitherTex_TexelSize.xy
+                ).r;
+                clip(1 - _DitherStrength - ditherVal);
+#endif
+/**********************************************************************************************************************/
+                
             }

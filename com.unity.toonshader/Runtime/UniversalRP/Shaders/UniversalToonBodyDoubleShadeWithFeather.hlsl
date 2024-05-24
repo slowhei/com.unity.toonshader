@@ -500,20 +500,6 @@
 
 #endif
 
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of official UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-#if _CUSTOM_CODE_ON
-                const float2 positionSS = i.positionNDC.xy / i.positionNDC.w * _ScreenParams.xy;
-                float ditherVal = SAMPLE_TEXTURE2D(
-                    _DitherTex,
-                    sampler_DitherTex,
-                    positionSS * _DitherTex_TexelSize.xy
-                ).r;
-                clip(1 - _DitherStrength - ditherVal);
-#endif
-/**********************************************************************************************************************/
-
 #ifdef _WRITE_RENDERING_LAYERS
                 uint renderingLayers = GetMeshRenderingLayer();
                 outRenderingLayers = float4(EncodeMeshRenderingLayer(renderingLayers), 0, 0, 0);
