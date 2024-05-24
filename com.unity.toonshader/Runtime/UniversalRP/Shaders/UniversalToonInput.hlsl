@@ -191,8 +191,7 @@ half _Surface;
 
 float4 _DitherTex_ST;
 float4 _DitherTex_TexelSize;
-float _MinDitherDistance;
-float _MaxDitherDistance;
+float _DitherStrength;
 
 #endif
 /**********************************************************************************************************************/

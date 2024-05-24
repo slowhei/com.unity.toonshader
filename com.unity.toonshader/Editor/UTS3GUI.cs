@@ -209,6 +209,9 @@ namespace UnityEditor.Rendering.Toon
 // CUSTOM CODE (not part of official UTS)
 //---------------------------------------------------------------------------------------------------------------------/
         internal const string ShaderDefineCUSTOM_CODE_ON = "_CUSTOM_CODE_ON";
+        
+        internal const string ShaderPropDitherTex = "_DitherTex";
+        internal const string ShaderPropDitherStrength = "_DitherStrength";
 /**********************************************************************************************************************/
 
         protected readonly string[] UtsModeNames = { "Standard", "With Additional Control Maps" };
@@ -429,8 +432,7 @@ namespace UnityEditor.Rendering.Toon
 // CUSTOM CODE (not part of official UTS)
 //---------------------------------------------------------------------------------------------------------------------/
         protected MaterialProperty ditherTex = null;
-        protected MaterialProperty minDitherDistance = null;
-        protected MaterialProperty maxDitherDistance = null;
+        protected MaterialProperty ditherStrength = null;
 /**********************************************************************************************************************/
 
         //------------------------------------------------------
@@ -534,9 +536,8 @@ namespace UnityEditor.Rendering.Toon
 /**********************************************************************************************************************/
 // CUSTOM CODE (not part of official UTS)
 //---------------------------------------------------------------------------------------------------------------------/
-            ditherTex = FindProperty("_DitherTex", props);
-            minDitherDistance = FindProperty("_MinDitherDistance", props);
-            maxDitherDistance = FindProperty("_MaxDitherDistance", props);
+            ditherTex = FindProperty(ShaderPropDitherTex, props);
+            ditherStrength = FindProperty(ShaderPropDitherStrength, props);
 /**********************************************************************************************************************/
 
         }
@@ -629,12 +630,6 @@ namespace UnityEditor.Rendering.Toon
             public static readonly GUIContent shadowControlMapFoldout = EditorGUIUtility.TrTextContent("Shadow Control Maps", "Shadow control map settings. Such as positions and highlight filtering.");
             public static readonly GUIContent pointLightFoldout = EditorGUIUtility.TrTextContent("Point Light Settings", "Point light settings. Such as filtering and step offset.");
 
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of official UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-            public static readonly GUIContent customFoldout = EditorGUIUtility.TrTextContent("Custom Settings", "Custom settings that do not exist in the original official UTS.");
-/**********************************************************************************************************************/
-
             public static readonly GUIContent baseColorText = new GUIContent("Base Map", "Base Color : Texture(sRGB) × Color(RGB) Default:White");
             public static readonly GUIContent firstShadeColorText = new GUIContent("1st Shading Map", "The map used for the brighter portions of the shadow.");
             public static readonly GUIContent secondShadeColorText = new GUIContent("2nd Shading Map", "The map used for the darker portions of the shadow.");
@@ -653,12 +648,6 @@ namespace UnityEditor.Rendering.Toon
             public static readonly GUIContent outlineTexText = new GUIContent("Outline Color Map", "Outline texture : Texture(sRGB) Default:White");
             public static readonly GUIContent bakedNormalOutlineText = new GUIContent("Baked Normal Map for Outline", "Unpacked Normal Map : Texture(linear) .Note that this is not a standard NORMAL MAP.");
             public static readonly GUIContent clippingMaskText = new GUIContent("Clipping Mask", "A grayscale texture which utilises its brightness to control transparency.");
-            
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of official UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-            public static readonly GUIContent ditherTexText = new GUIContent("Dither Texture", "A grayscale texture used for dither fading.");
-/**********************************************************************************************************************/
 
             public static readonly GUIContent specularModeText = new GUIContent("Specular Mode", "Specular light mode. Hard or Soft.");
             public static readonly GUIContent specularBlendModeText = new GUIContent("Color Blending Mode", "Specular color blending mode. Multiply or Add.");
@@ -897,16 +886,6 @@ namespace UnityEditor.Rendering.Toon
                 tooltip: "Sets the reference speed for color shift. When the value is 1, one cycle should take around 6 seconds.",
                 propName: "_ColorShift_Speed", defaultValue: 0);
             
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of official UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-            public static readonly FloatProperty minDitherDistanceText = new FloatProperty(label: "Minimum Dither Distance", 
-                tooltip: "Objects this distance away or closer will be completely invisible.",
-                propName: "_MinDitherDistance", defaultValue: 0);
-            public static readonly FloatProperty maxDitherDistanceText = new FloatProperty(label: "Maximum Dither Distance", 
-                tooltip: "Objects this distance away or farther will be completely visible.",
-                propName: "_MaxDitherDistance", defaultValue: 1);
-/**********************************************************************************************************************/
 
             // Color prperties
             public static readonly ColorProperty viewShiftText = new ColorProperty(label: "Shifting Target Color",
@@ -928,6 +907,21 @@ namespace UnityEditor.Rendering.Toon
             public static readonly ColorProperty outlineColorText = new ColorProperty(label: "Outline Color",
                 tooltip: "Specifies the color of outline.",
                 propName: "_Outline_Color", isHDR: false);
+            
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+            public static readonly GUIContent customFoldout = EditorGUIUtility.TrTextContent(
+                "Custom Settings", "Custom settings that do not exist in the original official UTS.");
+            
+            public static readonly GUIContent ditherTexText = new (
+                "Dither Texture", "A grayscale texture used for dither fading.");
+            public static readonly RangeProperty ditherStrengthText = new (
+                "Dither Strength", "Controls the dither fade strength where 0 is fully visible and 1 is fully invisible.",
+                ShaderPropDitherStrength,
+                0.0f, 0.0f, 1.0f);
+/**********************************************************************************************************************/
+
         }
         // --------------------------------
 
@@ -2431,8 +2425,7 @@ namespace UnityEditor.Rendering.Toon
         {
             GUI_ToggleShaderKeyword(material, "Custom Code", ShaderDefineCUSTOM_CODE_ON);
             m_MaterialEditor.TexturePropertySingleLine(Styles.ditherTexText, ditherTex); 
-            GUI_FloatProperty(material, Styles.minDitherDistanceText);
-            GUI_FloatProperty(material, Styles.maxDitherDistanceText);
+            GUI_RangeProperty(material, Styles.ditherStrengthText);
         }
 /**********************************************************************************************************************/
 

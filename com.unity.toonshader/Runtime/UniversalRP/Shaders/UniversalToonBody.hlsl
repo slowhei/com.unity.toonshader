@@ -593,9 +593,7 @@
                         sampler_DitherTex,
                         positionSS * _DitherTex_TexelSize.xy
                     ).r;
-                    clip((i.positionNDC.w - _MinDitherDistance)
-                        / (_MaxDitherDistance - _MinDitherDistance)
-                        - ditherVal);
+                    clip(1 - _DitherStrength - ditherVal);
 #endif
 /**********************************************************************************************************************/
                 
