@@ -84,6 +84,27 @@
                 return o;
             }
             float4 frag(VertexOutput i) : SV_Target{
+
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of official UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+#if _CUSTOM_CODE_ON
+                const float2 posSS = i.posNDC.xy / i.posNDC.w * _ScreenParams.xy;
+
+                // float4 posNDC = i.pos * 0.5f;
+                // posNDC.xy = float2(posNDC.x, posNDC.y * _ProjectionParams.x) + posNDC.w;
+                // posNDC.zw = i.pos.zw;
+                // const float2 posSS = posNDC.xy / posNDC.w * _ScreenParams.xy;
+                
+                float ditherVal = SAMPLE_TEXTURE2D(
+                    _DitherTex,
+                    sampler_DitherTex,
+                    posSS * _DitherTex_TexelSize.xy
+                ).r;
+                clip(1 - _DitherStrength - ditherVal);
+#endif
+/**********************************************************************************************************************/
+                
                 //v.2.0.5
                 if (_ZOverDrawMode > 0.99f)
                 {
@@ -105,20 +126,6 @@
                 float3 Set_BaseColor = _BaseColor.rgb*_MainTex_var.rgb;
                 float3 _Is_BlendBaseColor_var = lerp( _Outline_Color.rgb*lightColor, (_Outline_Color.rgb*Set_BaseColor*Set_BaseColor*lightColor), _Is_BlendBaseColor );
 
-/**********************************************************************************************************************/
-// CUSTOM CODE (not part of official UTS)
-//---------------------------------------------------------------------------------------------------------------------/
-#if _CUSTOM_CODE_ON
-                const float2 positionSS = i.posNDC.xy / i.posNDC.w * _ScreenParams.xy;
-                float ditherVal = SAMPLE_TEXTURE2D(
-                    _DitherTex,
-                    sampler_DitherTex,
-                    positionSS * _DitherTex_TexelSize.xy
-                ).r;
-                clip(1 - _DitherStrength - ditherVal);
-#endif
-/**********************************************************************************************************************/
-                
                 //
                 float3 _OutlineTex_var = tex2D(_OutlineTex,TRANSFORM_TEX(Set_UV0, _OutlineTex)).rgb;
 //v.2.0.7.5

@@ -1398,14 +1398,22 @@ Shader "Toon" {
             #pragma prefer_hlslcc gles
             #pragma exclude_renderers d3d11_9x
 
+/**********************************************************************************************************************/
+// ORIGINAL CODE
+//---------------------------------------------------------------------------------------------------------------------/
+            // #pragma vertex DepthNormalsVertex
+            // #pragma fragment DepthNormalsFragment
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of original UTS)
+// ---------------------------------------------------------------------------------------------------------------------/
             #pragma vertex DepthNormalsVertex
-            #pragma fragment DepthNormalsFragment
+            #pragma fragment frag
+/**********************************************************************************************************************/
 
             // -------------------------------------
             // Material Keywords
             #pragma shader_feature_local _PARALLAXMAP
             #pragma shader_feature_local _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-
 
             //--------------------------------------
             // GPU Instancing
@@ -1418,6 +1426,40 @@ Shader "Toon" {
 
             #include "../../UniversalRP/Shaders/UniversalToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthNormalsPass.hlsl"
+
+/**********************************************************************************************************************/
+// CUSTOM CODE (not part of original UTS)
+//---------------------------------------------------------------------------------------------------------------------/
+            void frag(
+                Varyings input,
+                out half4 outNormalWS : SV_Target0
+            #ifdef _WRITE_RENDERING_LAYERS
+                , out float4 outRenderingLayers : SV_Target1
+            #endif
+            )
+            {
+                DepthNormalsFragment(
+                    input,
+                    outNormalWS
+                #ifdef _WRITE_RENDERING_LAYERS
+                    , outRenderingLayers
+                #endif
+                );
+                
+                float4 positionNDC = input.positionCS * 0.5f;
+                positionNDC.xy = float2(positionNDC.x, positionNDC.y * _ProjectionParams.x) + positionNDC.w;
+                positionNDC.zw = input.positionCS.zw;
+                const float2 positionSS = positionNDC.xy / positionNDC.w * _ScreenParams.xy;
+                
+                float ditherVal = SAMPLE_TEXTURE2D(
+                    _DitherTex,
+                    sampler_DitherTex,
+                    positionSS * _DitherTex_TexelSize.xy
+                ).r;
+                half shouldClip = (1 - _DitherStrength - ditherVal) < 0;
+                outNormalWS = half4(!shouldClip, !shouldClip, !shouldClip, !shouldClip);
+            }
+/**********************************************************************************************************************/
 
             ENDHLSL
         }

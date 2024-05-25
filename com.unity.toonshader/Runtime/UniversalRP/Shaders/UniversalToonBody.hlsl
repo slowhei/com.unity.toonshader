@@ -559,19 +559,6 @@
 #endif
             )
             {
-#if defined(_SHADINGGRADEMAP)
-                    fragShadingGradeMap(i, facing, finalRGBA
-                        #ifdef _WRITE_RENDERING_LAYERS
-                            ,outRenderingLayers
-                        #endif
-                    );
-#else
-                    fragDoubleShadeFeather(i, facing, finalRGBA
-                        #ifdef _WRITE_RENDERING_LAYERS
-                            ,outRenderingLayers
-                        #endif
-                    );
-#endif
 
 /**********************************************************************************************************************/
 // CUSTOM CODE (not part of official UTS)
@@ -591,4 +578,17 @@
 #endif
 /**********************************************************************************************************************/
                 
+#if defined(_SHADINGGRADEMAP)
+                    fragShadingGradeMap(i, facing, finalRGBA
+                        #ifdef _WRITE_RENDERING_LAYERS
+                            ,outRenderingLayers
+                        #endif
+                    );
+#else
+                    fragDoubleShadeFeather(i, facing, finalRGBA
+                        #ifdef _WRITE_RENDERING_LAYERS
+                            ,outRenderingLayers
+                        #endif
+                    );
+#endif
             }
